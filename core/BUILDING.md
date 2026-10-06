@@ -32,6 +32,15 @@ Console build, produces the static library for MIPS:
 make platform=sf2000
 ```
 
+SF3000 build, produces a loadable libretro shared core:
+
+```sh
+make platform=sf3000 \
+  LDFLAGS="-mips32r2 -mhard-float -mfp32 -EL \
+    --sysroot=/path/to/mipsel-buildroot-linux-gnu/sysroot \
+    -L/path/to/mipsel-buildroot-linux-gnu/sysroot/usr/lib -lc -lstdc++"
+```
+
 Switching between the two requires `make clean` first. Both write `.o` files
 into the same paths, and a MIPS object will not link into a host binary.
 

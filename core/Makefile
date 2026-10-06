@@ -32,6 +32,17 @@ ifeq ($(platform), sf2000)
    ifneq ($(MULTICORE_INCLUDE),)
       EXTRA_INCDIRS = -I../../include
    endif
+else ifeq ($(platform), sf3000)
+   TARGET := $(TARGET_NAME)_libretro.so
+   MIPS ?= /home/tomaszz/sf3000-work/sf3000toolchain/mipsel-buildroot-linux-gnu_sdk-buildroot/opt/ext-toolchain/bin/mips-mti-linux-gnu-
+   CC = $(MIPS)gcc
+   CXX = $(MIPS)g++
+   CFLAGS = -EL -mips32r2 -mhard-float -mfp32 -G0 -fPIC
+   CFLAGS += -ffast-math -fomit-frame-pointer -ffunction-sections -fdata-sections
+   CFLAGS += -O2 -DSF3000 -DNDEBUG
+   CXXFLAGS := $(CFLAGS) -std=gnu++11
+   SHARED := -shared -Wl,--version-script=link.T -Wl,--no-undefined
+   LIBCO_SRC = libco_ucontext.c
 else
    TARGET := $(TARGET_NAME)_libretro.so
    CC := /usr/bin/gcc -m64
@@ -144,7 +155,7 @@ $(TARGET): $(OBJECTS)
 	$(AR) rcs $@ $(OBJECTS)
 else
 $(TARGET): $(OBJECTS)
-	$(CXX) $(SHARED) $(CXXFLAGS) -o $@ $(OBJECTS) -lm
+	$(CXX) $(SHARED) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) -lm
 endif
 
 %.o: %.c
